@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
@@ -9,17 +10,14 @@ public class Rocket : MonoBehaviour
     [SerializeField] float mainThrust = 120f;
     [SerializeField] float rcsThrust = 120f;
 
-    // Previous position
-    Vector3 originalPosition;
-    Quaternion originalRotation;
+    enum State { Alive, Dying, Transcending };
+    State state = State.Alive;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
         shipThruster = GetComponent<AudioSource>();
-        this.originalPosition = this.transform.position;
-        this.originalRotation = this.transform.rotation;
     }
 
     // Update is called once per frame
@@ -30,21 +28,47 @@ public class Rocket : MonoBehaviour
 
     private void ProcessInput()
     {
-        Thrust();
-        Rotate();
+        if (state == State.Alive)
+        {
+            Thrust();
+            Rotate();
+        }
+        
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if (state != State.Alive)
+        {
+            return;
+        }
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
                 // do something
                 break;
+            case "Finish":
+                print("Finished the level.");
+                state = State.Transcending;
+                Invoke("loadNextScene", 1f);
+                break;
             default:
-                transform.SetPositionAndRotation(originalPosition, originalRotation);
+                print("Hit something deadly.");
+                state = State.Dying;
+                Invoke("LoadFirstScene", 1f);
                 break;
         }
+    }
+
+    private void loadNextScene()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    private void LoadFirstScene()
+    {
+        SceneManager.LoadScene(0);
     }
 
     private void Thrust()
