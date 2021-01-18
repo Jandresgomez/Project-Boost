@@ -1642,14 +1642,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2549395765815452927, guid: e73c0a34299fe384d829bc99c4d8fdb4, type: 3}
-      propertyPath: m_Constraints
-      value: 56
-      objectReference: {fileID: 0}
-    - target: {fileID: 4983789193552912890, guid: e73c0a34299fe384d829bc99c4d8fdb4, type: 3}
-      propertyPath: MinDistance
-      value: 0.34397507
-      objectReference: {fileID: 0}
     - target: {fileID: 7944798293158657701, guid: e73c0a34299fe384d829bc99c4d8fdb4, type: 3}
       propertyPath: m_RootOrder
       value: 7
