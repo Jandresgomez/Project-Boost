@@ -18,6 +18,8 @@ public class Oscilator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Mathf.Abs(Mathf.Epsilon - period) <= Mathf.Epsilon) { return; }
+
         float currentCycleStep = Time.time / period;
         float rawSin = Mathf.Sin(2 * Mathf.PI * currentCycleStep);
         float offset = (rawSin / 2) + 0.5f;
