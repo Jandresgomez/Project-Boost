@@ -10,9 +10,14 @@ public class Rocket : MonoBehaviour
 
     [SerializeField] float mainThrust = 120f;
     [SerializeField] float rcsThrust = 120f;
+
     [SerializeField] AudioClip thrustSound;
     [SerializeField] AudioClip deathSound;
     [SerializeField] AudioClip completionSound;
+
+    [SerializeField] ParticleSystem thrustParticle;
+    [SerializeField] ParticleSystem deathParticle;
+    [SerializeField] ParticleSystem completionParticle;
 
     enum State { Alive, Dying, Transcending };
     State state = State.Alive;
@@ -65,8 +70,13 @@ public class Rocket : MonoBehaviour
     {
         print("Hit something deadly.");
         state = State.Dying;
+
         audioSource.Stop();
+        thrustParticle.Stop();
+
+        deathParticle.Play();
         audioSource.PlayOneShot(this.deathSound);
+
         Invoke("LoadFirstScene", 1f);
     }
 
@@ -74,20 +84,27 @@ public class Rocket : MonoBehaviour
     {
         print("Finished the level.");
         state = State.Transcending;
+
         audioSource.Stop();
+        thrustParticle.Stop();
+
+        completionParticle.Play();
         audioSource.PlayOneShot(this.completionSound);
+
         Invoke("LoadNextScene", 1f);
     }
 
     private void LoadNextScene()
     {
         audioSource.Stop();
+        completionParticle.Stop();
         SceneManager.LoadScene(1);
     }
 
     private void LoadFirstScene()
     {
         audioSource.Stop();
+        deathParticle.Stop();
         SceneManager.LoadScene(0);
     }
 
@@ -98,14 +115,11 @@ public class Rocket : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             ThrustRocket();
-            if (!audioSource.isPlaying)
-            {
-                audioSource.PlayOneShot(thrustSound);
-            }
         }
         else
         {
             audioSource.Stop();
+            thrustParticle.Stop();
         }
 
         rigidBody.freezeRotation = false; // Avoid sticking forces to the ship
@@ -115,6 +129,11 @@ public class Rocket : MonoBehaviour
     {
         float thrustSpeedForFrame = Time.deltaTime * mainThrust;
         rigidBody.AddRelativeForce(Vector3.up * thrustSpeedForFrame);
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(thrustSound);
+            thrustParticle.Play();
+        }
     }
 
     private void RotationInputVerification()
