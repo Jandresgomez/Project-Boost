@@ -53,20 +53,30 @@ public class Rocket : MonoBehaviour
                 // do something
                 break;
             case "Finish":
-                print("Finished the level.");
-                state = State.Transcending;
-                audioSource.Stop();
-                audioSource.PlayOneShot(this.completionSound);
-                Invoke("LoadNextScene", 1f);
+                StartNextSceneSequence();
                 break;
             default:
-                print("Hit something deadly.");
-                state = State.Dying;
-                audioSource.Stop();
-                audioSource.PlayOneShot(this.deathSound);
-                Invoke("LoadFirstScene", 1f);
+                StartDeadSequence();
                 break;
         }
+    }
+
+    private void StartDeadSequence()
+    {
+        print("Hit something deadly.");
+        state = State.Dying;
+        audioSource.Stop();
+        audioSource.PlayOneShot(this.deathSound);
+        Invoke("LoadFirstScene", 1f);
+    }
+
+    private void StartNextSceneSequence()
+    {
+        print("Finished the level.");
+        state = State.Transcending;
+        audioSource.Stop();
+        audioSource.PlayOneShot(this.completionSound);
+        Invoke("LoadNextScene", 1f);
     }
 
     private void LoadNextScene()
